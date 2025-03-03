@@ -1,6 +1,12 @@
 
 export type TruckStatus = 'On-Track' | 'Delayed';
 
+export interface Location {
+  lat: number;
+  lng: number;
+  name: string;
+}
+
 export interface Truck {
   id: string;
   vehicleNumber: string;
@@ -8,7 +14,10 @@ export interface Truck {
   status: TruckStatus;
   driverNumber?: string;
   imageUrl?: string;
-  date?: Date; // Add date field
+  date?: Date;
+  origin?: Location;
+  destination?: Location;
+  journeyProgress?: number; // Percentage 0-100
 }
 
 export interface TruckSummary {
