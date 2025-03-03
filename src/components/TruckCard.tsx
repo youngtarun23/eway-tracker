@@ -2,13 +2,14 @@
 import { Truck } from '@/types';
 import { StatusBadge } from './StatusBadge';
 import { cn } from '@/lib/utils';
+import { HTMLAttributes } from 'react';
 
-interface TruckCardProps {
+interface TruckCardProps extends HTMLAttributes<HTMLDivElement> {
   truck: Truck;
   className?: string;
 }
 
-export function TruckCard({ truck, className }: TruckCardProps) {
+export function TruckCard({ truck, className, ...props }: TruckCardProps) {
   return (
     <div 
       className={cn(
@@ -16,6 +17,7 @@ export function TruckCard({ truck, className }: TruckCardProps) {
         "animate-fade-in flex flex-col md:flex-row items-center md:items-start gap-4",
         className
       )}
+      {...props}
     >
       <div className="w-24 h-24 rounded-md bg-muted/50 flex-shrink-0 overflow-hidden">
         <img 

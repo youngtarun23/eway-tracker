@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import { Truck, TruckSummary } from '@/types';
+import { Truck, TruckStatus } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'sonner';
 
