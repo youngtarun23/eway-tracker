@@ -2,21 +2,37 @@
 import { useState, useRef } from 'react';
 import { useTruckData } from '@/hooks/useTruckData';
 import { useTruckSearch } from '@/hooks/useTruckSearch';
+import { useTruckFilters } from '@/hooks/useTruckFilters';
 import { useCSVUpload } from '@/hooks/useCSVUpload';
 import { TruckCard } from '@/components/TruckCard';
 import { SummaryCard } from '@/components/SummaryCard';
 import { AddTruckDialog } from '@/components/AddTruckDialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, Upload, Truck } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Search, Upload, Truck, CalendarIcon, FilterIcon } from 'lucide-react';
+import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { TruckStatus } from '@/types';
 
 const Index = () => {
   const { trucks, summary, addTruck, importTrucksFromCSV } = useTruckData();
-  const { searchQuery, setSearchQuery, filteredTrucks } = useTruckSearch(trucks);
+  const { searchQuery, setSearchQuery, filteredTrucks: searchedTrucks } = useTruckSearch(trucks);
+  const { 
+    statusFilter, 
+    setStatusFilter, 
+    startDate, 
+    setStartDate, 
+    endDate, 
+    setEndDate, 
+    filteredTrucks 
+  } = useTruckFilters(searchedTrucks);
   const { isLoading, handleFileUpload } = useCSVUpload(importTrucksFromCSV);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadHover, setUploadHover] = useState(false);
+  const [companyName, setCompanyName] = useState("Transport Co.");
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -39,8 +55,16 @@ const Index = () => {
         {/* Header Section */}
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-20 h-20 rounded-xl border flex items-center justify-center bg-white shadow-subtle">
-              <Truck size={32} className="text-primary" />
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-20 h-20 rounded-xl border flex items-center justify-center bg-white shadow-subtle">
+                <Truck size={32} className="text-primary" />
+              </div>
+              <input
+                type="text"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                className="text-sm font-medium bg-transparent border-b border-transparent focus:border-primary focus:outline-none text-center"
+              />
             </div>
             <h1 className="text-2xl font-semibold">Truck Tracking Dashboard</h1>
           </div>
@@ -82,8 +106,83 @@ const Index = () => {
           </div>
         </header>
         
+        {/* Filter Section */}
+        <div className="flex flex-wrap gap-4 items-center">
+          <div className="flex items-center gap-2">
+            <FilterIcon size={16} className="text-muted-foreground" />
+            <span className="text-sm font-medium">Filters:</span>
+          </div>
+          
+          <div className="flex flex-wrap gap-4">
+            <Select
+              value={statusFilter}
+              onValueChange={(value) => setStatusFilter(value as TruckStatus | 'All')}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Statuses</SelectItem>
+                <SelectItem value="On-Track">On-Track</SelectItem>
+                <SelectItem value="Delayed">Delayed</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <div className="flex items-center gap-2">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-[150px] justify-start text-left font-normal">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {startDate ? format(startDate, 'PP') : <span>Start date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={startDate || undefined}
+                    onSelect={(date) => setStartDate(date)}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              
+              <span className="text-sm text-muted-foreground">to</span>
+              
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="w-[150px] justify-start text-left font-normal">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {endDate ? format(endDate, 'PP') : <span>End date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={endDate || undefined}
+                    onSelect={(date) => setEndDate(date)}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              
+              {(startDate || endDate) && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => {
+                    setStartDate(null);
+                    setEndDate(null);
+                  }}
+                >
+                  Clear
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+        
         {/* Summary Cards */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <SummaryCard title="Total" value={summary.total} />
           <SummaryCard title="On-Track" value={summary.onTrack} type="success" />
           <SummaryCard title="Delayed" value={summary.delayed} type="error" />

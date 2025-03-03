@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from 'react';
-import { Truck, TruckStatus } from '@/types';
+import { Truck, TruckStatus, TruckSummary } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'sonner';
 
@@ -11,7 +12,8 @@ const initialTrucks: Truck[] = [
     ewayBill: '124567809',
     status: 'On-Track',
     driverNumber: '9876543210',
-    imageUrl: '/placeholder.svg'
+    imageUrl: '/placeholder.svg',
+    date: new Date(2023, 5, 15)
   },
   {
     id: uuidv4(),
@@ -19,7 +21,8 @@ const initialTrucks: Truck[] = [
     ewayBill: '124567809',
     status: 'Delayed',
     driverNumber: '9876543211',
-    imageUrl: '/placeholder.svg'
+    imageUrl: '/placeholder.svg',
+    date: new Date(2023, 6, 20)
   },
   {
     id: uuidv4(),
@@ -27,7 +30,8 @@ const initialTrucks: Truck[] = [
     ewayBill: '124567809',
     status: 'On-Track',
     driverNumber: '9876543212',
-    imageUrl: '/placeholder.svg'
+    imageUrl: '/placeholder.svg',
+    date: new Date(2023, 7, 5)
   },
   {
     id: uuidv4(),
@@ -35,7 +39,8 @@ const initialTrucks: Truck[] = [
     ewayBill: '124567809',
     status: 'Delayed',
     driverNumber: '9876543213',
-    imageUrl: '/placeholder.svg'
+    imageUrl: '/placeholder.svg',
+    date: new Date(2023, 7, 12)
   },
   {
     id: uuidv4(),
@@ -43,7 +48,8 @@ const initialTrucks: Truck[] = [
     ewayBill: '124567809',
     status: 'On-Track',
     driverNumber: '9876543214',
-    imageUrl: '/placeholder.svg'
+    imageUrl: '/placeholder.svg',
+    date: new Date(2023, 8, 3)
   },
   {
     id: uuidv4(),
@@ -51,7 +57,8 @@ const initialTrucks: Truck[] = [
     ewayBill: '124567809',
     status: 'On-Track',
     driverNumber: '9876543215',
-    imageUrl: '/placeholder.svg'
+    imageUrl: '/placeholder.svg',
+    date: new Date(2023, 8, 15)
   },
   {
     id: uuidv4(),
@@ -59,7 +66,8 @@ const initialTrucks: Truck[] = [
     ewayBill: '124567809',
     status: 'On-Track',
     driverNumber: '9876543216',
-    imageUrl: '/placeholder.svg'
+    imageUrl: '/placeholder.svg',
+    date: new Date(2023, 9, 1)
   },
 ];
 

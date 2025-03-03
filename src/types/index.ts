@@ -8,6 +8,7 @@ export interface Truck {
   status: TruckStatus;
   driverNumber?: string;
   imageUrl?: string;
+  date?: Date; // Add date field
 }
 
 export interface TruckSummary {

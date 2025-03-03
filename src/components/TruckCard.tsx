@@ -3,6 +3,7 @@ import { Truck } from '@/types';
 import { StatusBadge } from './StatusBadge';
 import { cn } from '@/lib/utils';
 import { HTMLAttributes } from 'react';
+import { format } from 'date-fns';
 
 interface TruckCardProps extends HTMLAttributes<HTMLDivElement> {
   truck: Truck;
@@ -37,6 +38,12 @@ export function TruckCard({ truck, className, ...props }: TruckCardProps) {
           {truck.driverNumber && (
             <p className="text-sm text-muted-foreground">
               Driver Number: {truck.driverNumber}
+            </p>
+          )}
+          
+          {truck.date && (
+            <p className="text-sm text-muted-foreground">
+              Date: {format(truck.date, 'PP')}
             </p>
           )}
         </div>
