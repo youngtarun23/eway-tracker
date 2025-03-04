@@ -74,7 +74,7 @@ function MobileSidebar({
   className, 
   children, 
   ...props 
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode }) {
   const { collapsed, setCollapsed } = useSidebar();
 
   return (
@@ -100,19 +100,21 @@ function MobileSidebar({
 }
 
 // Sidebar header
-function SidebarHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("py-4", className)} {...props} />;
+function SidebarHeader({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode }) {
+  return <div className={cn("py-4", className)} {...props}>{children}</div>;
 }
 
 // Sidebar content
-function SidebarContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("flex-1 overflow-auto", className)} {...props} />;
+function SidebarContent({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode }) {
+  return <div className={cn("flex-1 overflow-auto", className)} {...props}>{children}</div>;
 }
 
 // Sidebar footer
-function SidebarFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+function SidebarFooter({ className, children, ...props }: React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode }) {
   return (
-    <div className={cn("mt-auto border-t py-4", className)} {...props} />
+    <div className={cn("mt-auto border-t py-4", className)} {...props}>
+      {children}
+    </div>
   );
 }
 
@@ -122,7 +124,7 @@ function SidebarSection({
   children, 
   className, 
   ...props 
-}: React.HTMLAttributes<HTMLDivElement> & { title?: string }) {
+}: React.HTMLAttributes<HTMLDivElement> & { title?: string; children?: React.ReactNode }) {
   return (
     <div className={cn("py-2", className)} {...props}>
       {title && (
@@ -136,13 +138,13 @@ function SidebarSection({
 }
 
 // Sidebar menu
-function SidebarMenu({ className, ...props }: React.HTMLAttributes<HTMLUListElement>) {
-  return <ul className={cn("space-y-1 px-2", className)} {...props} />;
+function SidebarMenu({ className, children, ...props }: React.HTMLAttributes<HTMLUListElement> & { children?: React.ReactNode }) {
+  return <ul className={cn("space-y-1 px-2", className)} {...props}>{children}</ul>;
 }
 
 // Sidebar menu item
-function SidebarMenuItem({ className, ...props }: React.HTMLAttributes<HTMLLIElement>) {
-  return <li className={cn("", className)} {...props} />;
+function SidebarMenuItem({ className, children, ...props }: React.HTMLAttributes<HTMLLIElement> & { children?: React.ReactNode }) {
+  return <li className={cn("", className)} {...props}>{children}</li>;
 }
 
 // Sidebar menu button
