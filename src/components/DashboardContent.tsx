@@ -7,6 +7,7 @@ import { SummaryCard } from '@/components/SummaryCard';
 import { FilterSection } from '@/components/FilterSection';
 import { TruckList } from '@/components/TruckList';
 import { Truck, TruckSummary } from '@/types';
+import { SortOption } from '@/hooks/useTruckFilters';
 
 interface DashboardContentProps {
   trucks: Truck[];
@@ -18,8 +19,8 @@ interface DashboardContentProps {
   setStartDate: (date: Date | null) => void;
   endDate: Date | null;
   setEndDate: (date: Date | null) => void;
-  sortBy: string;
-  setSortBy: (sortBy: string) => void;
+  sortBy: SortOption;
+  setSortBy: (sortBy: SortOption) => void;
   filteredTrucks: Truck[];
   paginatedTrucks: Truck[];
   summary: TruckSummary;

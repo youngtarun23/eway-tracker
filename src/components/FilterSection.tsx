@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { TruckStatus } from '@/types';
+import { SortOption } from '@/hooks/useTruckFilters';
 
 interface FilterSectionProps {
   statusFilter: TruckStatus | 'All';
@@ -15,8 +16,8 @@ interface FilterSectionProps {
   setStartDate: (date: Date | null) => void;
   endDate: Date | null;
   setEndDate: (date: Date | null) => void;
-  sortBy: string;
-  setSortBy: (sortBy: string) => void;
+  sortBy: SortOption;
+  setSortBy: (sortBy: SortOption) => void;
 }
 
 export function FilterSection({
@@ -112,7 +113,7 @@ export function FilterSection({
           <p className="text-sm text-muted-foreground mb-1">Sort By</p>
           <Select
             value={sortBy}
-            onValueChange={(value) => setSortBy(value as any)}
+            onValueChange={(value) => setSortBy(value as SortOption)}
           >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Sort by" />

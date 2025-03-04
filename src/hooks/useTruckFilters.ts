@@ -2,7 +2,7 @@
 import { useState, useMemo } from 'react';
 import { Truck, TruckStatus } from '@/types';
 
-type SortOption = 'date-asc' | 'date-desc' | 'status';
+export type SortOption = 'date-asc' | 'date-desc' | 'status';
 
 export function useTruckFilters(trucks: Truck[]) {
   const [statusFilter, setStatusFilter] = useState<TruckStatus | 'All'>('All');

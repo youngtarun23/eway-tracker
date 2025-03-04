@@ -2,7 +2,7 @@
 import { useState, useRef } from 'react';
 import { useTruckData } from '@/hooks/useTruckData';
 import { useTruckSearch } from '@/hooks/useTruckSearch';
-import { useTruckFilters } from '@/hooks/useTruckFilters';
+import { useTruckFilters, SortOption } from '@/hooks/useTruckFilters';
 import { useCSVUpload } from '@/hooks/useCSVUpload';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { CompanySidebar } from '@/components/CompanySidebar';
