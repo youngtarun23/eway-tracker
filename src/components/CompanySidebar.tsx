@@ -13,14 +13,18 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 interface CompanySidebarProps {
   companyName: string;
+  activeTab?: string;
+  onTabChange?: (tab: string) => void;
 }
 
-export function CompanySidebar({ companyName }: CompanySidebarProps) {
+export function CompanySidebar({ companyName, activeTab = 'dashboard', onTabChange }: CompanySidebarProps) {
   const [avatarLoaded, setAvatarLoaded] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
 
   const handleAvatarLoad = () => {
     setAvatarLoaded(true);
@@ -36,6 +40,12 @@ export function CompanySidebar({ companyName }: CompanySidebarProps) {
       .map(word => word[0])
       .join('')
       .toUpperCase();
+  };
+
+  const handleMenuItemClick = (tab: string) => {
+    if (onTabChange) {
+      onTabChange(tab);
+    }
   };
 
   return (
@@ -62,35 +72,50 @@ export function CompanySidebar({ companyName }: CompanySidebarProps) {
         <SidebarContent className={`px-2 ${collapsed ? "px-1" : "px-2"}`}>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton className={`w-full justify-${collapsed ? "center" : "start"}`}>
+              <SidebarMenuButton 
+                className={`w-full justify-${collapsed ? "center" : "start"} ${activeTab === 'dashboard' ? 'bg-accent' : ''}`}
+                onClick={() => handleMenuItemClick('dashboard')}
+              >
                 <Truck />
                 {!collapsed && <span>Dashboard</span>}
               </SidebarMenuButton>
             </SidebarMenuItem>
             
             <SidebarMenuItem>
-              <SidebarMenuButton className={`w-full justify-${collapsed ? "center" : "start"}`}>
+              <SidebarMenuButton 
+                className={`w-full justify-${collapsed ? "center" : "start"} ${activeTab === 'analytics' ? 'bg-accent' : ''}`}
+                onClick={() => handleMenuItemClick('analytics')}
+              >
                 <BarChart />
                 {!collapsed && <span>Analytics</span>}
               </SidebarMenuButton>
             </SidebarMenuItem>
             
             <SidebarMenuItem>
-              <SidebarMenuButton className={`w-full justify-${collapsed ? "center" : "start"}`}>
+              <SidebarMenuButton 
+                className={`w-full justify-${collapsed ? "center" : "start"} ${activeTab === 'profile' ? 'bg-accent' : ''}`}
+                onClick={() => handleMenuItemClick('profile')}
+              >
                 <User />
                 {!collapsed && <span>Company Profile</span>}
               </SidebarMenuButton>
             </SidebarMenuItem>
             
             <SidebarMenuItem>
-              <SidebarMenuButton className={`w-full justify-${collapsed ? "center" : "start"}`}>
+              <SidebarMenuButton 
+                className={`w-full justify-${collapsed ? "center" : "start"} ${activeTab === 'manage-access' ? 'bg-accent' : ''}`}
+                onClick={() => handleMenuItemClick('manage-access')}
+              >
                 <Users />
                 {!collapsed && <span>Manage Access</span>}
               </SidebarMenuButton>
             </SidebarMenuItem>
             
             <SidebarMenuItem>
-              <SidebarMenuButton className={`w-full justify-${collapsed ? "center" : "start"}`}>
+              <SidebarMenuButton 
+                className={`w-full justify-${collapsed ? "center" : "start"} ${activeTab === 'settings' ? 'bg-accent' : ''}`}
+                onClick={() => handleMenuItemClick('settings')}
+              >
                 <Settings />
                 {!collapsed && <span>Settings</span>}
               </SidebarMenuButton>
@@ -117,3 +142,4 @@ export function CompanySidebar({ companyName }: CompanySidebarProps) {
     </div>
   );
 }
+

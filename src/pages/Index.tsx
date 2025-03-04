@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { useTruckData } from '@/hooks/useTruckData';
 import { useTruckSearch } from '@/hooks/useTruckSearch';
@@ -12,11 +11,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { SidebarProvider, SidebarTrigger, Sidebar, SidebarContent, SidebarHeader, SidebarFooter } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { CompanySidebar } from '@/components/CompanySidebar';
 import { 
-  Search, Upload, Truck, CalendarIcon, FilterIcon, ArrowDown, 
-  ArrowUp, SortAsc, LogOut, User, Settings, Download
+  Search, Upload, CalendarIcon, FilterIcon, 
+  Download
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
@@ -30,7 +29,6 @@ import {
   PaginationNext, 
   PaginationPrevious 
 } from '@/components/ui/pagination';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const ITEMS_PER_PAGE = 5;
 
@@ -92,252 +90,267 @@ const Index = () => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-secondary/30">
-        <CompanySidebar companyName={companyName} />
+        <CompanySidebar 
+          companyName={companyName} 
+          activeTab={activeTab} 
+          onTabChange={setActiveTab} 
+        />
 
         <div className="flex-1">
           <div className="container py-8 space-y-8 max-w-6xl">
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <div className="flex items-center gap-4">
-                <SidebarTrigger />
-                <h1 className="text-2xl font-semibold">Truck Tracking Dashboard</h1>
-              </div>
-              
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-                  <TabsTrigger value="manage-access">Manage Access</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="dashboard" className="space-y-8 mt-0">
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div className="relative flex-1 md:w-64">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder="Search vehicle number..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10"
+            <header className="mb-6">
+              <h1 className="text-2xl font-semibold">Truck Tracking Dashboard</h1>
+            </header>
+            
+            {activeTab === 'dashboard' && (
+              <div className="space-y-8 mt-0">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                  <div className="relative flex-1 md:w-64">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search vehicle number..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <div className="relative">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        accept=".csv"
+                        onChange={handleFileInputChange}
+                        className="hidden"
+                        disabled={isLoading}
                       />
-                    </div>
-                    
-                    <div className="flex gap-2">
-                      <div className="relative">
-                        <input
-                          type="file"
-                          ref={fileInputRef}
-                          accept=".csv"
-                          onChange={handleFileInputChange}
-                          className="hidden"
+                      <div className="flex flex-col">
+                        <Button
+                          variant="outline"
+                          className="gap-2"
                           disabled={isLoading}
-                        />
-                        <div className="flex flex-col">
-                          <Button
-                            variant="outline"
-                            className="gap-2"
-                            disabled={isLoading}
-                            onClick={() => fileInputRef.current?.click()}
-                            onMouseEnter={() => setUploadHover(true)}
-                            onMouseLeave={() => setUploadHover(false)}
-                          >
-                            <Upload className={`h-4 w-4 ${uploadHover ? 'animate-slide-in-right' : ''}`} />
-                            <span>Upload CSV</span>
-                          </Button>
-                          <a 
-                            href={csvTemplateUrl} 
-                            download="truck_template.csv"
-                            className="text-xs text-primary flex items-center mt-1 hover:underline"
-                          >
-                            <Download className="h-3 w-3 mr-1" />
-                            Download Template
-                          </a>
-                        </div>
-                      </div>
-                      
-                      <AddTruckDialog onAddTruck={addTruck} />
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <SummaryCard title="Total" value={summary.total} />
-                    <SummaryCard title="On-Track" value={summary.onTrack} type="success" />
-                    <SummaryCard title="Delayed" value={summary.delayed} type="error" />
-                  </div>
-                  
-                  <div className="bg-white rounded-xl border p-4 space-y-4">
-                    <h2 className="text-lg font-medium flex items-center gap-2">
-                      <FilterIcon size={18} className="text-muted-foreground" />
-                      Filters and Sorting
-                    </h2>
-                    
-                    <div className="flex flex-wrap gap-4">
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Status</p>
-                        <Select
-                          value={statusFilter}
-                          onValueChange={(value) => setStatusFilter(value as TruckStatus | 'All')}
+                          onClick={() => fileInputRef.current?.click()}
+                          onMouseEnter={() => setUploadHover(true)}
+                          onMouseLeave={() => setUploadHover(false)}
                         >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="All">All Statuses</SelectItem>
-                            <SelectItem value="On-Track">On-Track</SelectItem>
-                            <SelectItem value="Delayed">Delayed</SelectItem>
-                          </SelectContent>
-                        </Select>
+                          <Upload className={`h-4 w-4 ${uploadHover ? 'animate-slide-in-right' : ''}`} />
+                          <span>Upload CSV</span>
+                        </Button>
+                        <a 
+                          href={csvTemplateUrl} 
+                          download="truck_template.csv"
+                          className="text-xs text-primary flex items-center mt-1 hover:underline"
+                        >
+                          <Download className="h-3 w-3 mr-1" />
+                          Download Template
+                        </a>
                       </div>
-                      
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Date Range</p>
-                        <div className="flex items-center gap-2">
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button variant="outline" className="w-[150px] justify-start text-left font-normal">
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {startDate ? format(startDate, 'PP') : <span>Start date</span>}
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                              <Calendar
-                                mode="single"
-                                selected={startDate || undefined}
-                                onSelect={(date) => setStartDate(date)}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          
-                          <span className="text-sm text-muted-foreground">to</span>
-                          
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button variant="outline" className="w-[150px] justify-start text-left font-normal">
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {endDate ? format(endDate, 'PP') : <span>End date</span>}
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                              <Calendar
-                                mode="single"
-                                selected={endDate || undefined}
-                                onSelect={(date) => setEndDate(date)}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          
-                          {(startDate || endDate) && (
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              onClick={() => {
-                                setStartDate(null);
-                                setEndDate(null);
-                              }}
-                            >
-                              Clear
+                    </div>
+                    
+                    <AddTruckDialog onAddTruck={addTruck} />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <SummaryCard title="Total" value={summary.total} />
+                  <SummaryCard title="On-Track" value={summary.onTrack} type="success" />
+                  <SummaryCard title="Delayed" value={summary.delayed} type="error" />
+                </div>
+                
+                <div className="bg-white rounded-xl border p-4 space-y-4">
+                  <h2 className="text-lg font-medium flex items-center gap-2">
+                    <FilterIcon size={18} className="text-muted-foreground" />
+                    Filters and Sorting
+                  </h2>
+                  
+                  <div className="flex flex-wrap gap-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">Status</p>
+                      <Select
+                        value={statusFilter}
+                        onValueChange={(value) => setStatusFilter(value as TruckStatus | 'All')}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="All">All Statuses</SelectItem>
+                          <SelectItem value="On-Track">On-Track</SelectItem>
+                          <SelectItem value="Delayed">Delayed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">Date Range</p>
+                      <div className="flex items-center gap-2">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="outline" className="w-[150px] justify-start text-left font-normal">
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {startDate ? format(startDate, 'PP') : <span>Start date</span>}
                             </Button>
-                          )}
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Sort By</p>
-                        <Select
-                          value={sortBy}
-                          onValueChange={(value) => setSortBy(value as any)}
-                        >
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Sort by" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="date-desc">
-                              <div className="flex items-center gap-2">
-                                <CalendarIcon size={14} />
-                                <span>Date (Newest First)</span>
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="date-asc">
-                              <div className="flex items-center gap-2">
-                                <CalendarIcon size={14} />
-                                <span>Date (Oldest First)</span>
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="status">
-                              <div className="flex items-center gap-2">
-                                <FilterIcon size={14} />
-                                <span>Status</span>
-                              </div>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <h2 className="text-lg font-medium">Tracked Vehicles</h2>
-                    
-                    {filteredTrucks.length === 0 ? (
-                      <div className="bg-white rounded-xl border p-8 text-center">
-                        <p className="text-muted-foreground">
-                          {trucks.length === 0 
-                            ? "No trucks added yet. Add a truck or upload a CSV file to get started."
-                            : "No trucks match your search criteria."
-                          }
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        {paginatedTrucks.map((truck, index) => (
-                          <TruckCard 
-                            key={truck.id} 
-                            truck={truck} 
-                            className="animate-fade-in" 
-                            style={{ animationDelay: `${index * 0.05}s` }}
-                          />
-                        ))}
-
-                        {totalPages > 1 && (
-                          <Pagination className="mt-6">
-                            <PaginationContent>
-                              <PaginationItem>
-                                <PaginationPrevious 
-                                  onClick={() => goToPage(Math.max(1, currentPage - 1))}
-                                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-                                />
-                              </PaginationItem>
-                              
-                              {Array.from({ length: totalPages }).map((_, i) => (
-                                <PaginationItem key={i}>
-                                  <PaginationLink 
-                                    isActive={currentPage === i + 1}
-                                    onClick={() => goToPage(i + 1)}
-                                  >
-                                    {i + 1}
-                                  </PaginationLink>
-                                </PaginationItem>
-                              ))}
-                              
-                              <PaginationItem>
-                                <PaginationNext 
-                                  onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
-                                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
-                                />
-                              </PaginationItem>
-                            </PaginationContent>
-                          </Pagination>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              mode="single"
+                              selected={startDate || undefined}
+                              onSelect={(date) => setStartDate(date)}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        
+                        <span className="text-sm text-muted-foreground">to</span>
+                        
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="outline" className="w-[150px] justify-start text-left font-normal">
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {endDate ? format(endDate, 'PP') : <span>End date</span>}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              mode="single"
+                              selected={endDate || undefined}
+                              onSelect={(date) => setEndDate(date)}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        
+                        {(startDate || endDate) && (
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => {
+                              setStartDate(null);
+                              setEndDate(null);
+                            }}
+                          >
+                            Clear
+                          </Button>
                         )}
                       </div>
-                    )}
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-1">Sort By</p>
+                      <Select
+                        value={sortBy}
+                        onValueChange={(value) => setSortBy(value as any)}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Sort by" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="date-desc">
+                            <div className="flex items-center gap-2">
+                              <CalendarIcon size={14} />
+                              <span>Date (Newest First)</span>
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="date-asc">
+                            <div className="flex items-center gap-2">
+                              <CalendarIcon size={14} />
+                              <span>Date (Oldest First)</span>
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="status">
+                            <div className="flex items-center gap-2">
+                              <FilterIcon size={14} />
+                              <span>Status</span>
+                            </div>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                </TabsContent>
+                </div>
                 
-                <TabsContent value="manage-access" className="mt-0">
-                  <ManageAccessFlow />
-                </TabsContent>
-              </Tabs>
-            </header>
+                <div className="space-y-4">
+                  <h2 className="text-lg font-medium">Tracked Vehicles</h2>
+                  
+                  {filteredTrucks.length === 0 ? (
+                    <div className="bg-white rounded-xl border p-8 text-center">
+                      <p className="text-muted-foreground">
+                        {trucks.length === 0 
+                          ? "No trucks added yet. Add a truck or upload a CSV file to get started."
+                          : "No trucks match your search criteria."
+                        }
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {paginatedTrucks.map((truck, index) => (
+                        <TruckCard 
+                          key={truck.id} 
+                          truck={truck} 
+                          className="animate-fade-in" 
+                          style={{ animationDelay: `${index * 0.05}s` }}
+                        />
+                      ))}
+
+                      {totalPages > 1 && (
+                        <Pagination className="mt-6">
+                          <PaginationContent>
+                            <PaginationItem>
+                              <PaginationPrevious 
+                                onClick={() => goToPage(Math.max(1, currentPage - 1))}
+                                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                              />
+                            </PaginationItem>
+                            
+                            {Array.from({ length: totalPages }).map((_, i) => (
+                              <PaginationItem key={i}>
+                                <PaginationLink 
+                                  isActive={currentPage === i + 1}
+                                  onClick={() => goToPage(i + 1)}
+                                >
+                                  {i + 1}
+                                </PaginationLink>
+                              </PaginationItem>
+                            ))}
+                            
+                            <PaginationItem>
+                              <PaginationNext 
+                                onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
+                                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                              />
+                            </PaginationItem>
+                          </PaginationContent>
+                        </Pagination>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            
+            {activeTab === 'manage-access' && <ManageAccessFlow />}
+            
+            {activeTab === 'analytics' && (
+              <div className="p-8 text-center bg-white rounded-xl border">
+                <h2 className="text-2xl font-semibold mb-4">Analytics Dashboard</h2>
+                <p className="text-muted-foreground">Analytics section coming soon.</p>
+              </div>
+            )}
+            
+            {activeTab === 'profile' && (
+              <div className="p-8 text-center bg-white rounded-xl border">
+                <h2 className="text-2xl font-semibold mb-4">Company Profile</h2>
+                <p className="text-muted-foreground">Company profile management coming soon.</p>
+              </div>
+            )}
+            
+            {activeTab === 'settings' && (
+              <div className="p-8 text-center bg-white rounded-xl border">
+                <h2 className="text-2xl font-semibold mb-4">Settings</h2>
+                <p className="text-muted-foreground">Settings section coming soon.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
