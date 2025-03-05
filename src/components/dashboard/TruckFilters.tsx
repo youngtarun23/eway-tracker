@@ -15,7 +15,7 @@ import {
   PopoverTrigger 
 } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
-import { Filters, SortOption } from '@/types';
+import { Filters, SortOption } from '@/lib/api';
 
 interface TruckFiltersProps {
   filters: Filters;
@@ -59,9 +59,8 @@ const TruckFilters: React.FC<TruckFiltersProps> = ({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="inactive">Inactive</SelectItem>
-                    <SelectItem value="maintenance">Maintenance</SelectItem>
+                    <SelectItem value="on-track">On Track</SelectItem>
+                    <SelectItem value="delayed">Delayed</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

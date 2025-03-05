@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,8 +20,6 @@ import TruckPagination from './TruckPagination';
 import { useQuery } from '@tanstack/react-query';
 import { getTrucks } from '@/lib/api';
 import { Filters, SortOption, Truck } from '@/types';
-
-interface DashboardProps { }
 
 interface SearchBarProps {
   searchTerm: string;
@@ -55,7 +54,6 @@ const Dashboard = () => {
   const { data: trucksData, isLoading, isError } = useQuery({
     queryKey: ['trucks', searchTerm, filters, sortOption, currentPage, trucksPerPage],
     queryFn: () => getTrucks(searchTerm, filters, sortOption, currentPage, trucksPerPage),
-    keepPreviousData: true,
   });
 
   const trucks: Truck[] = trucksData?.trucks || [];
@@ -157,7 +155,7 @@ const Dashboard = () => {
                 Total Trucks: {totalTrucks}
               </div>
               <div className="text-sm text-muted-foreground">
-                Active Trucks: {trucks.filter(truck => truck.status === 'active').length}
+                Active Trucks: {trucks.filter(truck => truck.status === 'On-Track').length}
               </div>
               {/* Add more summary data here */}
             </CardContent>

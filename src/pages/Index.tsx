@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { CompanySidebar } from '@/components/CompanySidebar';
-import { Dashboard } from '@/components/dashboard/Dashboard';
+import Dashboard from '@/components/dashboard/Dashboard';
 import { AnalyticsPlaceholder } from '@/components/analytics/AnalyticsPlaceholder';
 import { CompanyProfilePlaceholder } from '@/components/profile/CompanyProfilePlaceholder';
 import { SettingsPlaceholder } from '@/components/settings/SettingsPlaceholder';
