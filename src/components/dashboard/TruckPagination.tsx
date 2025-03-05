@@ -11,16 +11,16 @@ import {
 interface TruckPaginationProps {
   currentPage: number;
   totalPages: number;
-  onPageChange: (page: number) => void;
+  goToPage: (page: number) => void;
 }
 
-export const TruckPagination = ({ currentPage, totalPages, onPageChange }: TruckPaginationProps) => {
+export const TruckPagination = ({ currentPage, totalPages, goToPage }: TruckPaginationProps) => {
   return (
     <Pagination className="mt-6">
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious 
-            onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+            onClick={() => goToPage(Math.max(1, currentPage - 1))}
             className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
           />
         </PaginationItem>
@@ -29,7 +29,7 @@ export const TruckPagination = ({ currentPage, totalPages, onPageChange }: Truck
           <PaginationItem key={i}>
             <PaginationLink 
               isActive={currentPage === i + 1}
-              onClick={() => onPageChange(i + 1)}
+              onClick={() => goToPage(i + 1)}
             >
               {i + 1}
             </PaginationLink>
@@ -38,7 +38,7 @@ export const TruckPagination = ({ currentPage, totalPages, onPageChange }: Truck
         
         <PaginationItem>
           <PaginationNext 
-            onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+            onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
             className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
           />
         </PaginationItem>
@@ -46,5 +46,3 @@ export const TruckPagination = ({ currentPage, totalPages, onPageChange }: Truck
     </Pagination>
   );
 };
-
-export default TruckPagination;

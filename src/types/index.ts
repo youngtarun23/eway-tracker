@@ -14,15 +14,10 @@ export interface Truck {
   status: TruckStatus;
   driverNumber?: string;
   imageUrl?: string;
-  date: Date;
+  date?: Date;
   origin?: Location;
   destination?: Location;
   journeyProgress?: number; // Percentage 0-100
-  
-  // Additional fields needed by the dashboard
-  name: string;
-  type: string;
-  lastUpdated: string;
 }
 
 export interface TruckSummary {
@@ -30,11 +25,3 @@ export interface TruckSummary {
   onTrack: number;
   delayed: number;
 }
-
-// Filter and sort types used in the dashboard
-export interface Filters {
-  status: string;
-  type: string;
-}
-
-export type SortOption = 'newest' | 'oldest' | 'name_asc' | 'name_desc';
