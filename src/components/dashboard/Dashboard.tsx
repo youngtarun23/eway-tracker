@@ -1,167 +1,172 @@
+import React, { useState, useEffect } from 'react';
+import { Search } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { SettingsPlaceholder } from '../settings/SettingsPlaceholder';
+import TruckFilters from './TruckFilters';
+import TruckPagination from './TruckPagination';
+import { useQuery } from '@tanstack/react-query';
+import { getTrucks } from '@/lib/api';
+import { Filters, SortOption, Truck } from '@/types';
 
-import { useState } from 'react';
-import { useTruckData } from '@/hooks/useTruckData';
-import { useTruckSearch } from '@/hooks/useTruckSearch';
-import { useTruckFilters } from '@/hooks/useTruckFilters';
-import { useCSVUpload } from '@/hooks/useCSVUpload';
-import { TruckCard } from '@/components/TruckCard';
-import { SummaryCard } from '@/components/SummaryCard';
-import { AddTruckDialog } from '@/components/AddTruckDialog';
-import { SearchBar } from '@/components/dashboard/SearchBar';
-import { TruckFilters } from '@/components/dashboard/TruckFilters';
-import { TruckPagination } from '@/components/dashboard/TruckPagination';
-import { Button } from '@/components/ui/button';
-import { Upload, Download } from 'lucide-react';
-import { toast } from 'sonner';
-import { useRef, useState as useHoverState } from 'react';
+interface DashboardProps { }
 
-const ITEMS_PER_PAGE = 5;
+interface SearchBarProps {
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
+}
 
-const generateCSVTemplate = () => {
-  const headers = ['vehicleNumber', 'ewayBill', 'status', 'origin', 'destination', 'distance', 'journeyProgress'];
-  const sampleRow = ['TN01A1234', 'EW123456789', 'On-Track', 'Chennai', 'Bangalore', '350', '60'];
-  const csvContent = [headers.join(','), sampleRow.join(',')].join('\n');
-  const blob = new Blob([csvContent], { type: 'text/csv' });
-  return URL.createObjectURL(blob);
+const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, onSearchChange }) => {
+  return (
+    <div className="relative flex items-center">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <Input
+        type="search"
+        placeholder="Search trucks..."
+        className="pl-10"
+        value={searchTerm}
+        onChange={(e) => onSearchChange(e.target.value)}
+      />
+    </div>
+  );
 };
 
-export const Dashboard = () => {
-  const { trucks, summary, addTruck, importTrucksFromCSV } = useTruckData();
-  const { searchQuery, setSearchQuery, filteredTrucks: searchedTrucks } = useTruckSearch(trucks);
-  const { 
-    statusFilter, 
-    setStatusFilter, 
-    startDate, 
-    setStartDate, 
-    endDate, 
-    setEndDate, 
-    sortBy,
-    setSortBy,
-    filteredTrucks 
-  } = useTruckFilters(searchedTrucks);
-  const { isLoading, handleFileUpload } = useCSVUpload(importTrucksFromCSV);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploadHover, setUploadHover] = useHoverState(false);
+const Dashboard = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState<Filters>({
+    status: 'all',
+    type: 'all',
+  });
+  const [sortOption, setSortOption] = useState<SortOption>('newest');
   const [currentPage, setCurrentPage] = useState(1);
-  const csvTemplateUrl = generateCSVTemplate();
+  const trucksPerPage = 5;
 
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
-        toast.error('Please upload a CSV file');
-        return;
-      }
-      handleFileUpload(file);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
+  const { data: trucksData, isLoading, isError } = useQuery({
+    queryKey: ['trucks', searchTerm, filters, sortOption, currentPage, trucksPerPage],
+    queryFn: () => getTrucks(searchTerm, filters, sortOption, currentPage, trucksPerPage),
+    keepPreviousData: true,
+  });
+
+  const trucks: Truck[] = trucksData?.trucks || [];
+  const totalTrucks: number = trucksData?.total || 0;
+  const totalPages = Math.ceil(totalTrucks / trucksPerPage);
+
+  const handleFilterChange = (key: keyof Filters, value: string | boolean) => {
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      [key]: value,
+    }));
+    setCurrentPage(1);
   };
 
-  const totalPages = Math.ceil(filteredTrucks.length / ITEMS_PER_PAGE);
-  const paginatedTrucks = filteredTrucks.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE, 
-    currentPage * ITEMS_PER_PAGE
-  );
-
-  const goToPage = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  if (isLoading) return <div>Loading trucks...</div>;
+  if (isError) return <div>Error fetching trucks.</div>;
 
   return (
-    <div className="space-y-8 mt-0">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-        
-        <div className="flex gap-2">
-          <div className="relative">
-            <input
-              type="file"
-              ref={fileInputRef}
-              accept=".csv"
-              onChange={handleFileInputChange}
-              className="hidden"
-              disabled={isLoading}
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight">Dashboard</h2>
+          <p className="text-muted-foreground">
+            Track and manage your truck fleet efficiently.
+          </p>
+        </div>
+        <Button>Add Truck</Button>
+      </div>
+      
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="w-full md:w-2/3 space-y-4">
+          <div className="flex justify-between items-center">
+            <SearchBar 
+              searchTerm={searchTerm} 
+              onSearchChange={(value) => setSearchTerm(value)} 
             />
-            <div className="flex flex-col">
-              <Button
-                variant="outline"
-                className="gap-2"
-                disabled={isLoading}
-                onClick={() => fileInputRef.current?.click()}
-                onMouseEnter={() => setUploadHover(true)}
-                onMouseLeave={() => setUploadHover(false)}
-              >
-                <Upload className={`h-4 w-4 ${uploadHover ? 'animate-slide-in-right' : ''}`} />
-                <span>Upload CSV</span>
-              </Button>
-              <a 
-                href={csvTemplateUrl} 
-                download="truck_template.csv"
-                className="text-xs text-primary flex items-center mt-1 hover:underline"
-              >
-                <Download className="h-3 w-3 mr-1" />
-                Download Template
-              </a>
-            </div>
+            
+            <TruckFilters 
+              filters={filters} 
+              onFilterChange={handleFilterChange} 
+              sortOption={sortOption} 
+              onSortChange={(value) => setSortOption(value as SortOption)}
+            />
           </div>
           
-          <AddTruckDialog onAddTruck={addTruck} />
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <SummaryCard title="Total" value={summary.total} />
-        <SummaryCard title="On-Track" value={summary.onTrack} type="success" />
-        <SummaryCard title="Delayed" value={summary.delayed} type="error" />
-      </div>
-      
-      <TruckFilters 
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        startDate={startDate}
-        setStartDate={setStartDate}
-        endDate={endDate}
-        setEndDate={setEndDate}
-        sortBy={sortBy}
-        setSortBy={setSortBy}
-      />
-      
-      <div className="space-y-4">
-        <h2 className="text-lg font-medium">Tracked Vehicles</h2>
-        
-        {filteredTrucks.length === 0 ? (
-          <div className="bg-white rounded-xl border p-8 text-center">
-            <p className="text-muted-foreground">
-              {trucks.length === 0 
-                ? "No trucks added yet. Add a truck or upload a CSV file to get started."
-                : "No trucks match your search criteria."
-              }
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {paginatedTrucks.map((truck, index) => (
-              <TruckCard 
-                key={truck.id} 
-                truck={truck} 
-                className="animate-fade-in" 
-                style={{ animationDelay: `${index * 0.05}s` }}
-              />
-            ))}
-
-            {totalPages > 1 && (
-              <TruckPagination 
-                currentPage={currentPage}
-                totalPages={totalPages}
-                goToPage={goToPage}
-              />
+          <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <Table>
+              <TableCaption>A list of your recent trucks.</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="px-6 py-3">Name</TableHead>
+                  <TableHead className="px-6 py-3">Type</TableHead>
+                  <TableHead className="px-6 py-3">Status</TableHead>
+                  <TableHead className="px-6 py-3">Last Updated</TableHead>
+                  <TableHead className="px-6 py-3">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {trucks.map((truck) => (
+                  <TableRow key={truck.id}>
+                    <TableCell className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                      {truck.name}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">{truck.type}</TableCell>
+                    <TableCell className="px-6 py-4">{truck.status}</TableCell>
+                    <TableCell className="px-6 py-4">{truck.lastUpdated}</TableCell>
+                    <TableCell className="px-6 py-4">
+                      <Button variant="ghost" size="sm">
+                        Edit
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            {trucks.length === 0 && (
+              <div className="p-4 text-center">No trucks found.</div>
             )}
           </div>
-        )}
+          
+          {trucks.length > 0 && (
+            <div className="mt-4">
+              <TruckPagination 
+                currentPage={currentPage} 
+                totalPages={totalPages} 
+                onPageChange={setCurrentPage} 
+              />
+            </div>
+          )}
+        </div>
+        
+        <div className="w-full md:w-1/3 space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Summary</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="text-sm text-muted-foreground">
+                Total Trucks: {totalTrucks}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Active Trucks: {trucks.filter(truck => truck.status === 'active').length}
+              </div>
+              {/* Add more summary data here */}
+            </CardContent>
+          </Card>
+          <SettingsPlaceholder />
+        </div>
       </div>
     </div>
   );
 };
+
+export default Dashboard;

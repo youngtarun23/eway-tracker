@@ -1,144 +1,106 @@
 
-import { TruckStatus } from '@/types';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon, FilterIcon } from 'lucide-react';
-import { format } from 'date-fns';
+import React from 'react';
+import { Filter, SlidersHorizontal } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { 
+  Popover, 
+  PopoverContent, 
+  PopoverTrigger 
+} from "@/components/ui/popover";
+import { Label } from "@/components/ui/label";
+import { Filters, SortOption } from '@/types';
 
 interface TruckFiltersProps {
-  statusFilter: TruckStatus | 'All';
-  setStatusFilter: (status: TruckStatus | 'All') => void;
-  startDate: Date | null;
-  setStartDate: (date: Date | null) => void;
-  endDate: Date | null;
-  setEndDate: (date: Date | null) => void;
-  sortBy: string;
-  setSortBy: (sort: string) => void;
+  filters: Filters;
+  onFilterChange: (key: keyof Filters, value: string | boolean) => void;
+  sortOption: SortOption;
+  onSortChange: (value: SortOption) => void;
 }
 
-export const TruckFilters = ({
-  statusFilter,
-  setStatusFilter,
-  startDate,
-  setStartDate,
-  endDate,
-  setEndDate,
-  sortBy,
-  setSortBy
-}: TruckFiltersProps) => {
+const TruckFilters: React.FC<TruckFiltersProps> = ({ 
+  filters, 
+  onFilterChange, 
+  sortOption, 
+  onSortChange 
+}) => {
   return (
-    <div className="bg-white rounded-xl border p-4 space-y-4">
-      <h2 className="text-lg font-medium flex items-center gap-2">
-        <FilterIcon size={18} className="text-muted-foreground" />
-        Filters and Sorting
-      </h2>
-      
-      <div className="flex flex-wrap gap-4">
-        <div>
-          <p className="text-sm text-muted-foreground mb-1">Status</p>
-          <Select
-            value={statusFilter}
-            onValueChange={(value) => setStatusFilter(value as TruckStatus | 'All')}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="All">All Statuses</SelectItem>
-              <SelectItem value="On-Track">On-Track</SelectItem>
-              <SelectItem value="Delayed">Delayed</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <div>
-          <p className="text-sm text-muted-foreground mb-1">Date Range</p>
-          <div className="flex items-center gap-2">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="w-[150px] justify-start text-left font-normal">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {startDate ? format(startDate, 'PP') : <span>Start date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={startDate || undefined}
-                  onSelect={(date) => setStartDate(date)}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-            
-            <span className="text-sm text-muted-foreground">to</span>
-            
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="w-[150px] justify-start text-left font-normal">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {endDate ? format(endDate, 'PP') : <span>End date</span>}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={endDate || undefined}
-                  onSelect={(date) => setEndDate(date)}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-            
-            {(startDate || endDate) && (
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => {
-                  setStartDate(null);
-                  setEndDate(null);
-                }}
-              >
-                Clear
-              </Button>
-            )}
+    <div className="flex items-center gap-2">
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" size="sm" className="h-8 gap-1">
+            <Filter className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Filter</span>
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-80">
+          <div className="grid gap-4">
+            <div className="space-y-2">
+              <h4 className="font-medium leading-none">Filters</h4>
+              <p className="text-sm text-muted-foreground">
+                Filter trucks by different criteria
+              </p>
+            </div>
+            <div className="grid gap-2">
+              <div className="grid grid-cols-2 items-center gap-4">
+                <Label htmlFor="status">Status</Label>
+                <Select 
+                  value={filters.status} 
+                  onValueChange={(value) => onFilterChange('status', value)}
+                >
+                  <SelectTrigger id="status">
+                    <SelectValue placeholder="Any status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="maintenance">Maintenance</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-2 items-center gap-4">
+                <Label htmlFor="type">Type</Label>
+                <Select 
+                  value={filters.type} 
+                  onValueChange={(value) => onFilterChange('type', value)}
+                >
+                  <SelectTrigger id="type">
+                    <SelectValue placeholder="Any type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="pickup">Pickup</SelectItem>
+                    <SelectItem value="delivery">Delivery</SelectItem>
+                    <SelectItem value="transit">Transit</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div>
-          <p className="text-sm text-muted-foreground mb-1">Sort By</p>
-          <Select
-            value={sortBy}
-            onValueChange={(value) => setSortBy(value)}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="date-desc">
-                <div className="flex items-center gap-2">
-                  <CalendarIcon size={14} />
-                  <span>Date (Newest First)</span>
-                </div>
-              </SelectItem>
-              <SelectItem value="date-asc">
-                <div className="flex items-center gap-2">
-                  <CalendarIcon size={14} />
-                  <span>Date (Oldest First)</span>
-                </div>
-              </SelectItem>
-              <SelectItem value="status">
-                <div className="flex items-center gap-2">
-                  <FilterIcon size={14} />
-                  <span>Status</span>
-                </div>
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+        </PopoverContent>
+      </Popover>
+      
+      <Select value={sortOption} onValueChange={onSortChange}>
+        <SelectTrigger className="h-8 w-[180px]">
+          <SlidersHorizontal className="mr-2 h-3.5 w-3.5" />
+          <SelectValue placeholder="Sort by" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="newest">Newest First</SelectItem>
+          <SelectItem value="oldest">Oldest First</SelectItem>
+          <SelectItem value="name_asc">Name (A-Z)</SelectItem>
+          <SelectItem value="name_desc">Name (Z-A)</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
   );
 };
+
+export default TruckFilters;
