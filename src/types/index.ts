@@ -18,6 +18,11 @@ export interface Truck {
   origin?: Location;
   destination?: Location;
   journeyProgress?: number; // Percentage 0-100
+  
+  // Adding missing properties to fix TypeScript errors
+  name?: string;
+  type?: string;
+  lastUpdated?: string | Date;
 }
 
 export interface TruckSummary {
