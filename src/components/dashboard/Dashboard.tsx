@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useTruckData } from '@/hooks/useTruckData';
 import { useTruckSearch } from '@/hooks/useTruckSearch';
@@ -14,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Upload, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRef, useState as useHoverState } from 'react';
+import { SortOption, TruckStatus } from '@/types';
 
 const ITEMS_PER_PAGE = 5;
 
@@ -70,6 +70,14 @@ export const Dashboard = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleStatusFilterChange = (status: string) => {
+    setStatusFilter(status as TruckStatus | "All");
+  };
+
+  const handleSortChange = (sort: string) => {
+    setSortBy(sort as SortOption);
+  };
+
   return (
     <div className="space-y-8 mt-0">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -120,13 +128,13 @@ export const Dashboard = () => {
       
       <TruckFilters 
         statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
+        setStatusFilter={handleStatusFilterChange}
         startDate={startDate}
         setStartDate={setStartDate}
         endDate={endDate}
         setEndDate={setEndDate}
         sortBy={sortBy}
-        setSortBy={setSortBy}
+        setSortBy={handleSortChange}
       />
       
       <div className="space-y-4">

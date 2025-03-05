@@ -101,7 +101,10 @@ export function TruckCard({ truck, className, ...props }: TruckCardProps) {
             {/* Progress Bar */}
             <div className="w-full bg-secondary/30 rounded-full h-2.5 mb-4">
               <div 
-                className="bg-primary h-2.5 rounded-full transition-all duration-500"
+                className={cn(
+                  "h-2.5 rounded-full transition-all duration-500",
+                  truck.status === 'On-Track' ? "bg-success" : "bg-destructive"
+                )}
                 style={{ width: `${progress}%` }} 
               ></div>
             </div>
