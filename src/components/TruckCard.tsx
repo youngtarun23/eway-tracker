@@ -7,6 +7,7 @@ import { HTMLAttributes } from 'react';
 import { format } from 'date-fns';
 import { ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 import { Button } from './ui/button';
+import Map from './Map';
 
 interface TruckCardProps extends HTMLAttributes<HTMLDivElement> {
   truck: Truck;
@@ -105,13 +106,13 @@ export function TruckCard({ truck, className, ...props }: TruckCardProps) {
               ></div>
             </div>
 
-            {/* Map Placeholder - In a real implementation, this would be a proper map component */}
-            <div className="h-48 bg-muted/30 rounded-lg flex items-center justify-center">
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground">Journey Map View</p>
-                <p className="text-xs text-muted-foreground mt-1">From {origin.name} to {destination.name}</p>
-              </div>
-            </div>
+            {/* Map Component - Replaces the placeholder */}
+            <Map 
+              origin={origin}
+              destination={destination}
+              progress={progress}
+              className="h-48 rounded-lg"
+            />
           </div>
         </div>
       )}
