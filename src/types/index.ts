@@ -30,3 +30,14 @@ export interface TruckSummary {
   onTrack: number;
   delayed: number;
 }
+
+export type SortOption = 'newest' | 'oldest' | 'status' | 'progress';
+
+export interface CompanyProfile {
+  name: string;
+  panNumber: string;
+  gstNumber: string;
+  officeNumber: string;
+  email: string;
+  verified: boolean;
+}
