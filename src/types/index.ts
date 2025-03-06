@@ -41,3 +41,40 @@ export interface CompanyProfile {
   email: string;
   verified: boolean;
 }
+
+// E-way bill details interface
+export interface EwayBillDetails {
+  ebnNumber: string;
+  consignor: {
+    gstin: string;
+    name: string;
+    address: string;
+  };
+  consignee: {
+    gstin: string;
+    name: string;
+    address: string;
+  };
+  document: {
+    type: string;
+    number: string;
+    date: string;
+  };
+  goods: {
+    description: string;
+    hsnCode: string;
+    quantity: string;
+    unit: string;
+    value: string;
+  };
+  transporter: {
+    gstin: string;
+    name: string;
+    address: string;
+  };
+  vehicleNumber: string;
+  placeOfDispatch: string;
+  placeOfDelivery: string;
+  distance: string;
+  validityPeriod: string;
+}

@@ -5,9 +5,52 @@ import { StatusBadge } from './StatusBadge';
 import { cn } from '@/lib/utils';
 import { HTMLAttributes } from 'react';
 import { format } from 'date-fns';
-import { ChevronDown, ChevronUp, MapPin } from 'lucide-react';
+import { ChevronDown, ChevronUp, MapPin, FileText } from 'lucide-react';
 import { Button } from './ui/button';
 import Map from './Map';
+import { 
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger
+} from './ui/collapsible';
+import { Card, CardContent } from './ui/card';
+
+// Define E-way bill details interface
+interface EwayBillDetails {
+  ebnNumber: string;
+  consignor: {
+    gstin: string;
+    name: string;
+    address: string;
+  };
+  consignee: {
+    gstin: string;
+    name: string;
+    address: string;
+  };
+  document: {
+    type: string;
+    number: string;
+    date: string;
+  };
+  goods: {
+    description: string;
+    hsnCode: string;
+    quantity: string;
+    unit: string;
+    value: string;
+  };
+  transporter: {
+    gstin: string;
+    name: string;
+    address: string;
+  };
+  vehicleNumber: string;
+  placeOfDispatch: string;
+  placeOfDelivery: string;
+  distance: string;
+  validityPeriod: string;
+}
 
 interface TruckCardProps extends HTMLAttributes<HTMLDivElement> {
   truck: Truck;
@@ -16,6 +59,7 @@ interface TruckCardProps extends HTMLAttributes<HTMLDivElement> {
 
 export function TruckCard({ truck, className, ...props }: TruckCardProps) {
   const [expanded, setExpanded] = useState(false);
+  const [ewayBillExpanded, setEwayBillExpanded] = useState(false);
 
   // Mock data for map demonstration
   const defaultOrigin = { lat: 12.9716, lng: 77.5946, name: "Bangalore" };
@@ -23,6 +67,43 @@ export function TruckCard({ truck, className, ...props }: TruckCardProps) {
   const origin = truck.origin || defaultOrigin;
   const destination = truck.destination || defaultDestination;
   const progress = truck.journeyProgress || 45; // Default 45% if not provided
+
+  // Mock E-way bill details
+  const mockEwayBillDetails: EwayBillDetails = {
+    ebnNumber: truck.ewayBill,
+    consignor: {
+      gstin: "29AABCX0892R1ZK",
+      name: "ABC Supplies Ltd.",
+      address: "123 Industrial Area, Bangalore, Karnataka"
+    },
+    consignee: {
+      gstin: "33XYZPQ1234S1Z5",
+      name: "XYZ Enterprises",
+      address: "456 Business Park, Chennai, Tamil Nadu"
+    },
+    document: {
+      type: "Tax Invoice",
+      number: "INV-2023-1234",
+      date: "2023-05-15"
+    },
+    goods: {
+      description: "Electronic Components",
+      hsnCode: "8517",
+      quantity: "500",
+      unit: "Pcs",
+      value: "250000"
+    },
+    transporter: {
+      gstin: "29PQRST5678U1ZM",
+      name: "Fast Logistics Services",
+      address: "789 Transport Nagar, Bangalore, Karnataka"
+    },
+    vehicleNumber: truck.vehicleNumber,
+    placeOfDispatch: origin.name,
+    placeOfDelivery: destination.name,
+    distance: "350",
+    validityPeriod: "15-05-2023 to 17-05-2023"
+  };
 
   return (
     <div 
@@ -63,8 +144,156 @@ export function TruckCard({ truck, className, ...props }: TruckCardProps) {
           </div>
           
           <div className="border-t md:border-t-0 md:border-l pt-2 md:pt-0 md:pl-4 flex flex-col justify-center">
-            <span className="text-xs text-muted-foreground">E-Way Bill</span>
-            <span className="font-mono text-sm">{truck.ewayBill}</span>
+            <Collapsible
+              open={ewayBillExpanded}
+              onOpenChange={setEwayBillExpanded}
+              className="w-full"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs text-muted-foreground">E-Way Bill</span>
+                  <span className="font-mono text-sm block">{truck.ewayBill}</span>
+                </div>
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" size="sm" className="p-1">
+                    <FileText className="h-4 w-4 mr-1" />
+                    {ewayBillExpanded ? "Hide Details" : "View Details"}
+                  </Button>
+                </CollapsibleTrigger>
+              </div>
+              
+              <CollapsibleContent className="mt-4 space-y-4 animate-slide-down">
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <h4 className="font-medium text-sm mb-2">E-way Bill Details</h4>
+                        <table className="min-w-full text-xs">
+                          <tbody>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">EBN Number:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.ebnNumber}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">Distance:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.distance} km</td>
+                            </tr>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">Validity:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.validityPeriod}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <div>
+                        <h4 className="font-medium text-sm mb-2">Document Details</h4>
+                        <table className="min-w-full text-xs">
+                          <tbody>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">Type:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.document.type}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">Number:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.document.number}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">Date:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.document.date}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-medium text-sm mb-2">Consignor Details</h4>
+                        <table className="min-w-full text-xs">
+                          <tbody>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">Name:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.consignor.name}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">GSTIN:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.consignor.gstin}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">Address:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.consignor.address}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-medium text-sm mb-2">Consignee Details</h4>
+                        <table className="min-w-full text-xs">
+                          <tbody>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">Name:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.consignee.name}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">GSTIN:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.consignee.gstin}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">Address:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.consignee.address}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-medium text-sm mb-2">Goods Details</h4>
+                        <table className="min-w-full text-xs">
+                          <tbody>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">Description:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.goods.description}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">HSN Code:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.goods.hsnCode}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">Quantity:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.goods.quantity} {mockEwayBillDetails.goods.unit}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">Value:</td>
+                              <td className="py-1 font-medium">₹{mockEwayBillDetails.goods.value}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      
+                      <div>
+                        <h4 className="font-medium text-sm mb-2">Transporter Details</h4>
+                        <table className="min-w-full text-xs">
+                          <tbody>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">Name:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.transporter.name}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">GSTIN:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.transporter.gstin}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-1 text-muted-foreground">Address:</td>
+                              <td className="py-1 font-medium">{mockEwayBillDetails.transporter.address}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </CollapsibleContent>
+            </Collapsible>
           </div>
         </div>
       </div>
@@ -77,7 +306,7 @@ export function TruckCard({ truck, className, ...props }: TruckCardProps) {
         onClick={() => setExpanded(!expanded)}
       >
         {expanded ? 
-          <><ChevronUp className="h-4 w-4 mr-2" /> Hide Details</> : 
+          <><ChevronUp className="h-4 w-4 mr-2" /> Hide Journey</> : 
           <><ChevronDown className="h-4 w-4 mr-2" /> View Journey</>
         }
       </Button>
