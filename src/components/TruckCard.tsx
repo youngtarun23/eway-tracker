@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Truck } from '@/types';
 import { cn } from '@/lib/utils';
@@ -128,11 +129,6 @@ export function TruckCard({ truck, className, ...props }: TruckCardProps) {
             <EwayBillDetails details={mockEwayBillDetails} />
           </CollapsibleContent>
         </Collapsible>
-
-        <AlertsButton 
-          vehicleNumber={truck.vehicleNumber} 
-          defaultEmail="user@example.com"  
-        />
       </div>
 
       {/* Toggle Button */}
@@ -158,6 +154,15 @@ export function TruckCard({ truck, className, ...props }: TruckCardProps) {
             progress={progress}
             status={truck.status}
           />
+          
+          {/* Alert Button moved below timeline with full width */}
+          <div className="mt-4">
+            <AlertsButton 
+              vehicleNumber={truck.vehicleNumber} 
+              defaultEmail="user@example.com"
+              className="w-full"
+            />
+          </div>
         </div>
       )}
     </div>

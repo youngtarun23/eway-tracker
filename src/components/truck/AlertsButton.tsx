@@ -20,10 +20,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 interface AlertsButtonProps {
   vehicleNumber: string;
   defaultEmail?: string;
+  className?: string;
 }
 
 interface AlertContact {
@@ -31,7 +33,7 @@ interface AlertContact {
   value: string;
 }
 
-export function AlertsButton({ vehicleNumber, defaultEmail }: AlertsButtonProps) {
+export function AlertsButton({ vehicleNumber, defaultEmail, className }: AlertsButtonProps) {
   const [contacts, setContacts] = useState<AlertContact[]>([
     { type: 'email', value: defaultEmail || '' }
   ]);
@@ -89,7 +91,7 @@ export function AlertsButton({ vehicleNumber, defaultEmail }: AlertsButtonProps)
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="w-full mt-2">
+        <Button variant="outline" size="sm" className={cn("mt-2", className)}>
           <Bell className="h-4 w-4 mr-2" />
           Set Alerts
         </Button>
