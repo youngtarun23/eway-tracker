@@ -12,6 +12,7 @@ import {
 import { TruckHeader } from './truck/TruckHeader';
 import { JourneyTimeline } from './truck/JourneyTimeline';
 import { EwayBillDetails } from './truck/EwayBillDetails';
+import { AlertsButton } from './truck/AlertsButton';
 
 interface TruckCardProps extends HTMLAttributes<HTMLDivElement> {
   truck: Truck;
@@ -127,6 +128,11 @@ export function TruckCard({ truck, className, ...props }: TruckCardProps) {
             <EwayBillDetails details={mockEwayBillDetails} />
           </CollapsibleContent>
         </Collapsible>
+
+        <AlertsButton 
+          vehicleNumber={truck.vehicleNumber} 
+          defaultEmail="user@example.com"  
+        />
       </div>
 
       {/* Toggle Button */}
