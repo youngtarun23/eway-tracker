@@ -73,7 +73,7 @@ export function AlertsButton({
   };
   return <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="bg-slate-400 hover:bg-slate-300">
+        <Button variant="outline" size="sm" className="bg-slate-200 hover:bg-slate-100">
           <Bell className="h-4 w-4 mr-2" />
           Set Alerts
         </Button>
