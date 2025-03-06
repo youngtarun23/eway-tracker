@@ -1,66 +1,52 @@
-
 import { useState } from 'react';
 import { Bell, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-
 interface AlertsButtonProps {
   vehicleNumber: string;
   defaultEmail?: string;
   className?: string;
 }
-
 interface AlertContact {
   type: 'email' | 'phone';
   value: string;
 }
-
-export function AlertsButton({ vehicleNumber, defaultEmail, className }: AlertsButtonProps) {
-  const [contacts, setContacts] = useState<AlertContact[]>([
-    { type: 'email', value: defaultEmail || '' }
-  ]);
+export function AlertsButton({
+  vehicleNumber,
+  defaultEmail,
+  className
+}: AlertsButtonProps) {
+  const [contacts, setContacts] = useState<AlertContact[]>([{
+    type: 'email',
+    value: defaultEmail || ''
+  }]);
   const [threshold, setThreshold] = useState('30'); // minutes
   const [open, setOpen] = useState(false);
-
   const handleAddContact = () => {
-    setContacts([...contacts, { type: 'email', value: '' }]);
+    setContacts([...contacts, {
+      type: 'email',
+      value: ''
+    }]);
   };
-
   const handleRemoveContact = (index: number) => {
     setContacts(contacts.filter((_, i) => i !== index));
   };
-
   const handleContactChange = (index: number, value: string) => {
     const newContacts = [...contacts];
     newContacts[index].value = value;
     setContacts(newContacts);
   };
-
   const handleContactTypeChange = (index: number, type: 'email' | 'phone') => {
     const newContacts = [...contacts];
     newContacts[index].type = type;
     newContacts[index].value = ''; // Clear value when changing type
     setContacts(newContacts);
   };
-
   const handleSubmit = () => {
     // Validate contacts
     const isValid = contacts.every(contact => {
@@ -69,7 +55,6 @@ export function AlertsButton({ vehicleNumber, defaultEmail, className }: AlertsB
       }
       return /^\+?[\d\s-]{10,}$/.test(contact.value);
     });
-
     if (!isValid) {
       toast({
         title: "Validation Error",
@@ -82,16 +67,13 @@ export function AlertsButton({ vehicleNumber, defaultEmail, className }: AlertsB
     // Here you would integrate with your backend to save the alerts
     toast({
       title: "Alerts Set Successfully",
-      description: `Alerts will be sent when delay exceeds ${threshold} minutes`,
+      description: `Alerts will be sent when delay exceeds ${threshold} minutes`
     });
-    
     setOpen(false);
   };
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
+  return <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className={cn("mt-2", className)}>
+        <Button variant="outline" size="sm" className="bg-slate-400 hover:bg-slate-300">
           <Bell className="h-4 w-4 mr-2" />
           Set Alerts
         </Button>
@@ -107,10 +89,7 @@ export function AlertsButton({ vehicleNumber, defaultEmail, className }: AlertsB
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
             <Label htmlFor="threshold">Delay Threshold</Label>
-            <Select
-              value={threshold}
-              onValueChange={setThreshold}
-            >
+            <Select value={threshold} onValueChange={setThreshold}>
               <SelectTrigger>
                 <SelectValue placeholder="Select threshold" />
               </SelectTrigger>
@@ -125,14 +104,8 @@ export function AlertsButton({ vehicleNumber, defaultEmail, className }: AlertsB
 
           <div className="space-y-4">
             <Label>Alert Recipients</Label>
-            {contacts.map((contact, index) => (
-              <div key={index} className="flex gap-2 items-start">
-                <Select
-                  value={contact.type}
-                  onValueChange={(value: 'email' | 'phone') => 
-                    handleContactTypeChange(index, value)
-                  }
-                >
+            {contacts.map((contact, index) => <div key={index} className="flex gap-2 items-start">
+                <Select value={contact.type} onValueChange={(value: 'email' | 'phone') => handleContactTypeChange(index, value)}>
                   <SelectTrigger className="w-[100px]">
                     <SelectValue />
                   </SelectTrigger>
@@ -142,32 +115,14 @@ export function AlertsButton({ vehicleNumber, defaultEmail, className }: AlertsB
                   </SelectContent>
                 </Select>
                 
-                <Input
-                  type={contact.type === 'email' ? 'email' : 'tel'}
-                  placeholder={contact.type === 'email' ? 'Email' : 'Phone'}
-                  value={contact.value}
-                  onChange={(e) => handleContactChange(index, e.target.value)}
-                />
+                <Input type={contact.type === 'email' ? 'email' : 'tel'} placeholder={contact.type === 'email' ? 'Email' : 'Phone'} value={contact.value} onChange={e => handleContactChange(index, e.target.value)} />
                 
-                {contacts.length > 1 && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleRemoveContact(index)}
-                  >
+                {contacts.length > 1 && <Button variant="ghost" size="icon" onClick={() => handleRemoveContact(index)}>
                     <X className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-            ))}
+                  </Button>}
+              </div>)}
             
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleAddContact}
-              className="mt-2"
-            >
+            <Button type="button" variant="outline" size="sm" onClick={handleAddContact} className="mt-2">
               <Plus className="h-4 w-4 mr-2" />
               Add Recipient
             </Button>
@@ -176,6 +131,5 @@ export function AlertsButton({ vehicleNumber, defaultEmail, className }: AlertsB
 
         <Button onClick={handleSubmit}>Save Alert Settings</Button>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>;
 }
