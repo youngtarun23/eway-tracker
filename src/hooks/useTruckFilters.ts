@@ -2,13 +2,13 @@
 import { useState, useMemo } from 'react';
 import { Truck, TruckStatus } from '@/types';
 
-type SortOption = 'date-asc' | 'date-desc' | 'status';
+export type SortOption = 'newest' | 'oldest' | 'status' | 'progress';
 
 export function useTruckFilters(trucks: Truck[]) {
   const [statusFilter, setStatusFilter] = useState<TruckStatus | 'All'>('All');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [sortBy, setSortBy] = useState<SortOption>('date-desc');
+  const [sortBy, setSortBy] = useState<SortOption>('newest');
   
   const filteredTrucks = useMemo(() => {
     // First filter the trucks
@@ -36,14 +36,20 @@ export function useTruckFilters(trucks: Truck[]) {
         return a.status.localeCompare(b.status);
       }
       
+      if (sortBy === 'progress') {
+        const progressA = a.journeyProgress || 0;
+        const progressB = b.journeyProgress || 0;
+        return progressB - progressA; // Higher progress first
+      }
+      
       // Default sort by date if no dates available
       if (!a.date) return 1;
       if (!b.date) return -1;
       
       // Sort by date
-      if (sortBy === 'date-asc') {
+      if (sortBy === 'oldest') {
         return a.date.getTime() - b.date.getTime();
-      } else {
+      } else { // 'newest'
         return b.date.getTime() - a.date.getTime();
       }
     });

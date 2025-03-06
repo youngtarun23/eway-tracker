@@ -7,17 +7,26 @@ export interface Location {
   name: string;
 }
 
+export interface CityStop {
+  location: Location;
+  crossedAt?: Date;
+  expectedAt: Date;
+  status?: 'On-Track' | 'Delayed';
+}
+
 export interface Truck {
   id: string;
   vehicleNumber: string;
   ewayBill: string;
   status: TruckStatus;
   driverNumber?: string;
+  driverName?: string;
   imageUrl?: string;
   date?: Date;
   origin?: Location;
   destination?: Location;
   journeyProgress?: number; // Percentage 0-100
+  cityStops?: CityStop[];
   
   // Adding missing properties to fix TypeScript errors
   name?: string;

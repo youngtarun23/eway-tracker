@@ -1,13 +1,14 @@
 
 import { useState } from 'react';
-import { Truck } from '@/types';
+import { Truck, CityStop } from '@/types';
 import { StatusBadge } from './StatusBadge';
 import { cn } from '@/lib/utils';
 import { HTMLAttributes } from 'react';
 import { format } from 'date-fns';
-import { ChevronDown, ChevronUp, MapPin, FileText } from 'lucide-react';
+import { ChevronDown, ChevronUp, MapPin, FileText, Circle, CheckCircle2, XCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import Map from './Map';
+import { Separator } from './ui/separator';
 import { 
   Collapsible,
   CollapsibleContent,
@@ -67,6 +68,35 @@ export function TruckCard({ truck, className, ...props }: TruckCardProps) {
   const origin = truck.origin || defaultOrigin;
   const destination = truck.destination || defaultDestination;
   const progress = truck.journeyProgress || 45; // Default 45% if not provided
+
+  // Mock city stops if not provided
+  const mockCityStops: CityStop[] = truck.cityStops || [
+    {
+      location: { lat: 12.9716, lng: 77.5946, name: "Bangalore" },
+      expectedAt: new Date(2023, 5, 15, 8, 0),
+      crossedAt: new Date(2023, 5, 15, 8, 15),
+      status: 'On-Track'
+    },
+    {
+      location: { lat: 13.0327, lng: 78.6387, name: "Kolar" },
+      expectedAt: new Date(2023, 5, 15, 10, 0),
+      crossedAt: new Date(2023, 5, 15, 9, 45),
+      status: 'On-Track'
+    },
+    {
+      location: { lat: 13.1231, lng: 79.1282, name: "Chittoor" },
+      expectedAt: new Date(2023, 5, 15, 13, 0),
+      crossedAt: new Date(2023, 5, 15, 14, 30),
+      status: 'Delayed'
+    },
+    {
+      location: { lat: 13.0827, lng: 80.2707, name: "Chennai" },
+      expectedAt: new Date(2023, 5, 15, 16, 0),
+      status: undefined
+    }
+  ];
+
+  const cityStops = truck.cityStops || mockCityStops;
 
   // Mock E-way bill details
   const mockEwayBillDetails: EwayBillDetails = {
@@ -133,6 +163,12 @@ export function TruckCard({ truck, className, ...props }: TruckCardProps) {
             {truck.driverNumber && (
               <p className="text-sm text-muted-foreground">
                 Driver Number: {truck.driverNumber}
+              </p>
+            )}
+            
+            {truck.driverName && (
+              <p className="text-sm text-muted-foreground">
+                Driver Name: {truck.driverName}
               </p>
             )}
             
@@ -327,6 +363,55 @@ export function TruckCard({ truck, className, ...props }: TruckCardProps) {
               </div>
             </div>
 
+            {/* City Stops Timeline */}
+            <div className="relative flex justify-between items-center mb-5 px-2">
+              {cityStops.map((stop, index) => {
+                // Determine icon and color based on status
+                let Icon = Circle;
+                let color = "text-muted-foreground";
+                
+                if (stop.status === 'On-Track') {
+                  Icon = CheckCircle2;
+                  color = "text-success";
+                } else if (stop.status === 'Delayed') {
+                  Icon = XCircle;
+                  color = "text-destructive";
+                }
+                
+                return (
+                  <div 
+                    key={index} 
+                    className="flex flex-col items-center"
+                    style={{ 
+                      position: 'relative',
+                      zIndex: 10
+                    }}
+                  >
+                    <Icon className={`h-5 w-5 ${color}`} />
+                    <span className="text-xs mt-1 font-medium text-center">
+                      {stop.location.name}
+                    </span>
+                    {stop.crossedAt && (
+                      <span className={`text-xs ${stop.status === 'Delayed' ? 'text-destructive' : 'text-muted-foreground'}`}>
+                        {format(stop.crossedAt, 'HH:mm')}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+              
+              {/* Dotted line connecting the stops */}
+              <div 
+                className="absolute top-[10px] h-[1px] left-[10px] right-[10px] bg-dotted-line"
+                style={{ 
+                  backgroundImage: 'linear-gradient(to right, #cbd5e1 50%, transparent 50%)',
+                  backgroundSize: '8px 1px',
+                  backgroundRepeat: 'repeat-x',
+                  zIndex: 1
+                }}
+              />
+            </div>
+
             {/* Progress Bar */}
             <div className="w-full bg-secondary/30 rounded-full h-2.5 mb-4">
               <div 
@@ -338,7 +423,7 @@ export function TruckCard({ truck, className, ...props }: TruckCardProps) {
               ></div>
             </div>
 
-            {/* Map Component - Replaces the placeholder */}
+            {/* Map Component */}
             <Map 
               origin={origin}
               destination={destination}
