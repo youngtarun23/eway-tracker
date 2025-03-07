@@ -227,4 +227,3 @@ export function TruckHeader({ truck }: TruckHeaderProps) {
     </div>
   );
 }
-
