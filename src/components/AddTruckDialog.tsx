@@ -26,6 +26,7 @@ export function AddTruckDialog({ onAddTruck }: AddTruckDialogProps) {
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [ewayBill, setEwayBill] = useState('');
   const [driverNumber, setDriverNumber] = useState('');
+  const [driverName, setDriverName] = useState('');
   const [status, setStatus] = useState<TruckStatus>('On-Track');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -41,6 +42,7 @@ export function AddTruckDialog({ onAddTruck }: AddTruckDialogProps) {
       ewayBill,
       status,
       driverNumber: driverNumber || undefined,
+      driverName: driverName || undefined,
       imageUrl: '/placeholder.svg'
     };
     
@@ -53,6 +55,7 @@ export function AddTruckDialog({ onAddTruck }: AddTruckDialogProps) {
     setVehicleNumber('');
     setEwayBill('');
     setDriverNumber('');
+    setDriverName('');
     setStatus('On-Track');
   };
 
@@ -103,6 +106,16 @@ export function AddTruckDialog({ onAddTruck }: AddTruckDialogProps) {
                 value={driverNumber}
                 onChange={(e) => setDriverNumber(e.target.value)}
                 placeholder="e.g. 9876543210"
+              />
+            </div>
+            
+            <div className="grid gap-2">
+              <Label htmlFor="driverName">Driver Name</Label>
+              <Input
+                id="driverName"
+                value={driverName}
+                onChange={(e) => setDriverName(e.target.value)}
+                placeholder="e.g. Rajesh Kumar"
               />
             </div>
             
