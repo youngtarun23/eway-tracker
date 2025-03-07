@@ -48,7 +48,7 @@ export function TruckHeader({ truck }: TruckHeaderProps) {
       </div>
       
       <div className="flex flex-col md:flex-row flex-1 gap-4 w-full">
-        <div className="space-y-2 flex-1">
+        <div className="space-y-3 flex-1">
           <div className="flex flex-col md:flex-row md:items-center gap-2 justify-between">
             <h3 className="font-medium text-lg tracking-tight">{truck.vehicleNumber}</h3>
             <StatusBadge status={truck.status} />

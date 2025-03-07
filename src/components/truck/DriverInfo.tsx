@@ -30,8 +30,8 @@ export function DriverInfo({ driverName, driverNumber, licenseData, fineData }: 
     <div className="space-y-2">
       {driverName && (
         <div className="flex items-center gap-2">
-          <p className="text-sm text-muted-foreground">
-            Driver Name: {driverName}
+          <p className="text-sm font-medium">
+            Driver: <span className="text-muted-foreground">{driverName}</span>
           </p>
           
           <LicenseDetails licenseData={licenseData} />
