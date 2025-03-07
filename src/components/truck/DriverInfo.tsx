@@ -28,12 +28,6 @@ export function DriverInfo({ driverName, driverNumber, licenseData, fineData }: 
   
   return (
     <div className="space-y-2">
-      {driverNumber && (
-        <p className="text-sm text-muted-foreground">
-          Driver Number: {driverNumber}
-        </p>
-      )}
-      
       {driverName && (
         <div className="flex items-center gap-2">
           <p className="text-sm text-muted-foreground">
@@ -44,6 +38,12 @@ export function DriverInfo({ driverName, driverNumber, licenseData, fineData }: 
           
           {hasPendingFines && <FineDetails fineData={fineData} />}
         </div>
+      )}
+      
+      {driverNumber && (
+        <p className="text-sm text-muted-foreground">
+          Driver Number: {driverNumber}
+        </p>
       )}
     </div>
   );
