@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Check, ExternalLink, Phone, Truck, MapPin, Bell, FileText, Fuel, BarChart3, Clock, Shield, Users, HelpCircle } from 'lucide-react';
+import { Check, ExternalLink, Phone, Truck, MapPin, Bell, FileText, Fuel, BarChart3, Clock, Shield, Users, HelpCircle, Lock, Key, UserCheck } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from 'react-router-dom';
 
@@ -44,6 +43,7 @@ const LandingPage = () => {
           <nav className="hidden md:flex items-center space-x-6">
             <a href="#benefits" className="text-sm font-medium hover:text-primary">Benefits</a>
             <a href="#how-it-works" className="text-sm font-medium hover:text-primary">How It Works</a>
+            <a href="#security" className="text-sm font-medium hover:text-primary">Security</a>
             <a href="#faq" className="text-sm font-medium hover:text-primary">FAQ</a>
           </nav>
           <div className="flex items-center space-x-4">
@@ -205,6 +205,10 @@ const LandingPage = () => {
                   <Check className="h-5 w-5 text-success mr-2 mt-0.5" />
                   <span>Theft prevention monitoring</span>
                 </li>
+                <li className="flex items-start">
+                  <Check className="h-5 w-5 text-success mr-2 mt-0.5" />
+                  <span>Role-based access controls</span>
+                </li>
               </ul>
             </div>
             
@@ -333,6 +337,90 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Security & Compliance Section - New Section */}
+      <section id="security" className="py-16 container mx-auto">
+        <h2 className="text-3xl font-bold text-center mb-8">Enterprise-Grade Security</h2>
+        <p className="text-center text-muted-foreground max-w-2xl mx-auto mb-12">
+          We take your data security seriously with industry-leading standards and practices
+        </p>
+        
+        <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+          <div className="bg-muted p-8 rounded-lg">
+            <h3 className="text-xl font-semibold mb-6 flex items-center">
+              <Lock className="h-6 w-6 text-primary mr-2" />
+              ISO Certified Security
+            </h3>
+            <ul className="space-y-4">
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-success mr-3 mt-0.5" />
+                <div>
+                  <p className="font-medium">ISO 27001 Compliance</p>
+                  <p className="text-muted-foreground text-sm">Internationally recognized standard for information security management</p>
+                </div>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-success mr-3 mt-0.5" />
+                <div>
+                  <p className="font-medium">ISO 27017 & 27018</p>
+                  <p className="text-muted-foreground text-sm">Cloud service security and protection of personally identifiable information (PII)</p>
+                </div>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-success mr-3 mt-0.5" />
+                <div>
+                  <p className="font-medium">Regular Security Audits</p>
+                  <p className="text-muted-foreground text-sm">Independent third-party security assessments</p>
+                </div>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-success mr-3 mt-0.5" />
+                <div>
+                  <p className="font-medium">Advanced Encryption</p>
+                  <p className="text-muted-foreground text-sm">AES-256 bit encryption for data at rest and TLS for data in transit</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+          
+          <div className="bg-muted p-8 rounded-lg">
+            <h3 className="text-xl font-semibold mb-6 flex items-center">
+              <UserCheck className="h-6 w-6 text-primary mr-2" />
+              Role-Based Access Control
+            </h3>
+            <ul className="space-y-4">
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-success mr-3 mt-0.5" />
+                <div>
+                  <p className="font-medium">Granular Permission Settings</p>
+                  <p className="text-muted-foreground text-sm">Control exactly what each user can see and do within your account</p>
+                </div>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-success mr-3 mt-0.5" />
+                <div>
+                  <p className="font-medium">Custom User Roles</p>
+                  <p className="text-muted-foreground text-sm">Create custom roles for fleet managers, dispatchers, finance team, and clients</p>
+                </div>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-success mr-3 mt-0.5" />
+                <div>
+                  <p className="font-medium">Multi-Factor Authentication</p>
+                  <p className="text-muted-foreground text-sm">Additional security layer for sensitive operations</p>
+                </div>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-5 w-5 text-success mr-3 mt-0.5" />
+                <div>
+                  <p className="font-medium">Detailed Access Logs</p>
+                  <p className="text-muted-foreground text-sm">Comprehensive audit trails of all user actions</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section id="faq" className="py-16 container mx-auto">
         <h2 className="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
@@ -434,20 +522,32 @@ const LandingPage = () => {
               <div>
                 <h4 className="font-medium mb-2">Q: Is my data safe?</h4>
                 <ul className="text-muted-foreground space-y-1 pl-5 list-disc">
-                  <li>Government-grade security</li>
+                  <li>ISO 27001 certified security</li>
                   <li>End-to-end encryption</li>
                   <li>Private tracking links</li>
                   <li>Secure login system</li>
+                  <li>Regular security audits</li>
                 </ul>
               </div>
               
               <div>
                 <h4 className="font-medium mb-2">Q: Who can access my truck's data?</h4>
                 <ul className="text-muted-foreground space-y-1 pl-5 list-disc">
-                  <li>Only authorized users</li>
-                  <li>Role-based access</li>
-                  <li>Activity audit logs</li>
+                  <li>Only authorized users with proper permissions</li>
+                  <li>Role-based access control system</li>
+                  <li>Detailed activity audit logs</li>
                   <li>Data deletion option</li>
+                  <li>Granular permission settings</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 className="font-medium mb-2">Q: How do role-based permissions work?</h4>
+                <ul className="text-muted-foreground space-y-1 pl-5 list-disc">
+                  <li>Create custom roles for different team members</li>
+                  <li>Control access to sensitive information</li>
+                  <li>Limit actions based on responsibility</li>
+                  <li>Client-specific restricted views available</li>
                 </ul>
               </div>
             </div>
@@ -509,7 +609,7 @@ const LandingPage = () => {
       {/* Footer */}
       <footer className="py-12 border-t">
         <div className="container mx-auto">
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-4 gap-8">
             <div>
               <h3 className="text-lg font-semibold mb-4">TruckSathi</h3>
               <p className="text-muted-foreground">
@@ -522,7 +622,18 @@ const LandingPage = () => {
               <ul className="space-y-2">
                 <li><a href="#benefits" className="text-muted-foreground hover:text-primary">Benefits</a></li>
                 <li><a href="#how-it-works" className="text-muted-foreground hover:text-primary">How It Works</a></li>
+                <li><a href="#security" className="text-muted-foreground hover:text-primary">Security</a></li>
                 <li><a href="#faq" className="text-muted-foreground hover:text-primary">FAQ</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Security</h3>
+              <ul className="space-y-2">
+                <li><span className="text-muted-foreground">ISO 27001 Certified</span></li>
+                <li><span className="text-muted-foreground">Role-Based Access Control</span></li>
+                <li><span className="text-muted-foreground">Data Encryption</span></li>
+                <li><span className="text-muted-foreground">ULIP Compliance</span></li>
               </ul>
             </div>
             
