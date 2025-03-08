@@ -40,7 +40,7 @@ const LandingPage = () => {
       {/* Navigation */}
       <header className="border-b">
         <div className="container mx-auto flex items-center justify-between py-4">
-          <div className="text-2xl font-bold">eway-tracker</div>
+          <div className="text-2xl font-bold">TruckSathi</div>
           <nav className="hidden md:flex items-center space-x-6">
             <a href="#benefits" className="text-sm font-medium hover:text-primary">Benefits</a>
             <a href="#how-it-works" className="text-sm font-medium hover:text-primary">How It Works</a>
@@ -511,7 +511,7 @@ const LandingPage = () => {
         <div className="container mx-auto">
           <div className="grid md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-lg font-semibold mb-4">eway-tracker</h3>
+              <h3 className="text-lg font-semibold mb-4">TruckSathi</h3>
               <p className="text-muted-foreground">
                 India's simplest truck tracking solution for truck owners
               </p>
@@ -528,13 +528,13 @@ const LandingPage = () => {
             
             <div>
               <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
-              <p className="text-muted-foreground">support@eway-tracker.com</p>
+              <p className="text-muted-foreground">support@trucksathi.com</p>
               <p className="text-muted-foreground">+91 98765 43210</p>
             </div>
           </div>
           
           <div className="border-t mt-8 pt-8 text-center text-muted-foreground text-sm">
-            <p>© {new Date().getFullYear()} eway-tracker. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} TruckSathi. All rights reserved.</p>
           </div>
         </div>
       </footer>
