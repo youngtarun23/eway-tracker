@@ -1,5 +1,5 @@
 
-import { Circle, CheckCircle2, XCircle, MapPin } from 'lucide-react';
+import { Circle, CheckCircle2, XCircle, MapPin, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import { CityStop, Location } from '@/types';
 import { cn } from '@/lib/utils';
@@ -55,10 +55,20 @@ export function JourneyTimeline({ origin, destination, cityStops, progress, stat
               <span className="text-xs mt-1 font-medium text-center">
                 {stop.location.name}
               </span>
+              
+              {/* Show actual time for passed stops */}
               {stop.crossedAt && (
                 <span className={`text-xs ${stop.status === 'Delayed' ? 'text-destructive' : 'text-muted-foreground'}`}>
                   {format(stop.crossedAt, 'HH:mm')}
                 </span>
+              )}
+              
+              {/* Show ETA for future stops */}
+              {!stop.crossedAt && stop.expectedAt && (
+                <div className="flex items-center gap-1 text-xs text-primary mt-1">
+                  <Clock size={10} />
+                  <span>ETA: {format(stop.expectedAt, 'HH:mm')}</span>
+                </div>
               )}
             </div>
           );
@@ -86,6 +96,16 @@ export function JourneyTimeline({ origin, destination, cityStops, progress, stat
           style={{ width: `${progress}%` }} 
         ></div>
       </div>
+
+      {/* Final Destination ETA */}
+      {cityStops.length > 0 && !cityStops[cityStops.length - 1].crossedAt && (
+        <div className="flex items-center justify-center gap-2 mb-3 text-sm">
+          <Clock className="h-4 w-4 text-primary" />
+          <span className="font-medium">
+            Final Destination ETA: {format(cityStops[cityStops.length - 1].expectedAt, 'dd MMM, HH:mm')}
+          </span>
+        </div>
+      )}
 
       {/* Map Component */}
       <Map 
